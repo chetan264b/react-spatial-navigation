@@ -292,7 +292,7 @@ class SpatialNavigation {
     this.nativeMode = false;
     this.throttle = 0;
     this.throttleKeypresses = false;
-
+    this.shouldFocusDOMNode = false;
     this.pressedKeys = {};
 
     /**
@@ -316,7 +316,7 @@ class SpatialNavigation {
 
     this.debug = false;
     this.visualDebugger = null;
-
+    let shouldFocusDOMNode = false
     this.logIndex = 0;
   }
 
@@ -325,7 +325,8 @@ class SpatialNavigation {
     visualDebug: visualDebug = false,
     nativeMode: nativeMode = false,
     throttle: throttle = 0,
-    throttleKeypresses: throttleKeypresses = false
+    throttleKeypresses: throttleKeypresses = false,
+    shouldFocusDOMNode: shouldFocusDOMNode = false
   } = {}) {
     if (!this.enabled) {
       this.enabled = true;
@@ -333,7 +334,7 @@ class SpatialNavigation {
       this.throttleKeypresses = throttleKeypresses;
 
       this.debug = debug;
-
+      this.shouldFocusDOMNode = shouldFocusDOMNode && !nativeMode;
       if (!this.nativeMode) {
         if (Number.isInteger(throttle) && throttle > 0) {
           this.throttle = throttle;
@@ -870,7 +871,9 @@ class SpatialNavigation {
 
     if (this.isFocusableComponent(this.focusKey)) {
       const newComponent = this.focusableComponents[this.focusKey];
-
+      if (this.shouldFocusDOMNode && newComponent.node) {
+        newComponent.node.focus();
+      }
       newComponent.onUpdateFocus(true);
       newComponent.onBecameFocusedHandler(this.getNodeLayoutByFocusKey(this.focusKey), details);
     }
